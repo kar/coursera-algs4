@@ -71,6 +71,7 @@ public class Deque<Item> implements Iterable<Item> {
     Node<Item> node = head;
     if (size > 1) {
       head = head.next;
+      head.previous = null;
     } else {
       newHead(null);
     }
@@ -84,6 +85,7 @@ public class Deque<Item> implements Iterable<Item> {
     Node<Item> node = tail;
     if (size > 1) {
       tail = tail.previous;
+      tail.next = null;
     } else {
       newHead(null);
     }
@@ -93,31 +95,39 @@ public class Deque<Item> implements Iterable<Item> {
 
   // return an iterator over items in order from front to end
   public Iterator<Item> iterator() {
-    return new Iterator<Item>() {
-      private Node<Item> node = head;
-
-      @Override
-      public boolean hasNext() {
-        return node != null;
-      }
-
-      @Override
-      public Item next() {
-        if (node == null) {
-          throw new NoSuchElementException("iterator finished");
-        }
-        Item item = node.item;
-        node = node.next;
-        return item;
-      }
-
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException("do not remove in iterator");
-      }
-    };
+    return new DequeIterator();
   }
 
+  private class DequeIterator implements Iterator<Item> {
+    private Deque<Item> d = new Deque<>();
+
+    private DequeIterator() {
+      Node<Item> node = head;
+      if (node.item == null) {
+        return;
+      }
+
+      do {
+        d.addLast(node.item);
+        node = node.next;
+      } while(node != null);
+    }
+
+    @Override
+    public boolean hasNext() {
+      return !d.isEmpty();
+    }
+
+    @Override
+    public Item next() {
+      return d.removeFirst();
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException("do not remove in iterator");
+    }
+  };
   private void ensureNotNull(Item item) {
     if (item == null) {
       throw new NullPointerException("null item");
@@ -171,6 +181,13 @@ public class Deque<Item> implements Iterable<Item> {
       caught = true;
     }
     ass(caught);
+
+    // Intermixed calls
+    d.addFirst("F");
+    d.addLast("L");
+    d.removeFirst();
+    d.removeLast();
+    ass(d.isEmpty());
 
     // Iterator
     d.addFirst("S");

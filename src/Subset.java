@@ -1,5 +1,4 @@
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 /**
  * A CLI client that takes a command-line integer k; reads in a sequence of N strings from standard input using

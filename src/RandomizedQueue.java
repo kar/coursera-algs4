@@ -39,6 +39,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     Item item = index[i];
     index[i] = index[size - 1]; // Put last item at chosen item's place to have no gaps
     index[--size] = null; // Drop reference to the taken item and decrease the size
+    adjustIndexSize();
     return item;
   }
 
@@ -60,7 +61,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private RandomizedIterator() {
       q = new RandomizedQueue<>();
       for (int i = 0; i < size; i++) {
-        q.enqueue((Item)index[i]);
+        q.enqueue((Item) index[i]);
       }
     }
 
